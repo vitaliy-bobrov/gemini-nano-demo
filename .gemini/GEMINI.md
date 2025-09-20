@@ -19,7 +19,9 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 ## Components
 
 - Keep components small and focused on a single responsibility
+- Don't set `standalone: true` explicitly as it's a default value.
 - Use `input()` and `output()` functions instead of decorators
+- Use `readonly` access modifiers for properties that should be used in the template.
 - Use `computed()` for derived state
 - Set `changeDetection: ChangeDetectionStrategy.OnPush` in `@Component` decorator
 - Prefer inline templates for small components
@@ -39,6 +41,7 @@ You are an expert in TypeScript, Angular, and scalable web application developme
 - Keep templates simple and avoid complex logic
 - Use native control flow (`@if`, `@for`, `@switch`) instead of `*ngIf`, `*ngFor`, `*ngSwitch`
 - Use the async pipe to handle observables
+- Use self-closing tags for components if components don't use content projection.
 
 ## Services
 

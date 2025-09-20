@@ -1,0 +1,238 @@
+<mat-expansion-panel>
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      <h2
+        matBadgeSize="large"
+        [matBadge]="languageDetectorAPIStatusText()"
+        [matBadgeOverlap]="false"
+        [class.badge-available]="languageDetectorAPIAvailability() === 'available'"
+        [class.badge-unavailable]="languageDetectorAPIAvailability() === 'unavailable'"
+        [class.badge-checking]="languageDetectorAPIAvailability() === 'checking'"
+        [class.badge-downloadable]="languageDetectorAPIAvailability() === 'downloadable'"
+        [class.badge-downloading]="languageDetectorAPIAvailability() === 'downloading'"
+      >
+        Language Detector API
+      </h2>
+    </mat-panel-title>
+  </mat-expansion-panel-header>
+  <section class="content">
+    @if (languageDetectorAPIAvailability() === 'downloadable') {
+    <p>
+      <button matButton="tonal" (click)="downloadLanguageDetectorModel($event)">
+        Download model
+      </button>
+    </p>
+    }
+    <p>
+      <label id="progress-bar-label">
+        Model Download progress:
+        <mat-progress-bar
+          aria-labelledby="progress-bar-label"
+          mode="determinate"
+          [value]="languageDetectorAPIDownloadProgress()"
+        ></mat-progress-bar>
+      </label>
+    </p>
+    <mat-divider></mat-divider>
+
+    @if (languageDetectorAPIError(); as error) {
+    <p class="error">{{ error }}</p>
+    <mat-divider></mat-divider>
+    }
+
+    <section>
+      <h3>Documentation</h3>
+      <mat-nav-list>
+        <app-external-link link="https://developer.chrome.com/docs/ai/language-detection">
+          Chrome Developers Docs
+        </app-external-link>
+        <app-external-link link="https://developer.mozilla.org/en-US/docs/Web/API/LanguageDetector">
+          MDN Docs
+        </app-external-link>
+      </mat-nav-list>
+    </section>
+    <mat-divider></mat-divider>
+    <section>
+      <h3>Chrome internal tools</h3>
+      <mat-nav-list>
+        <app-external-link link="chrome://on-device-internals">
+          chrome://on-device-internals
+        </app-external-link>
+        <app-external-link link="chrome://flags/#language-detection-api">
+          chrome://flags/#language-detection-api
+        </app-external-link>
+        <app-external-link link="chrome://flags/#prompt-api-for-gemini-nano-multimodal-input">
+          chrome://flags/#prompt-api-for-gemini-nano-multimodal-input
+        </app-external-link>
+      </mat-nav-list>
+    </section>
+  </section>
+</mat-expansion-panel>
+
+<mat-expansion-panel>
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      <h2
+        matBadgeSize="large"
+        [matBadge]="translatorAPIStatusText()"
+        [matBadgeOverlap]="false"
+        [class.badge-available]="translatorAPIAvailability() === 'available'"
+        [class.badge-unavailable]="translatorAPIAvailability() === 'unavailable'"
+        [class.badge-checking]="translatorAPIAvailability() === 'checking'"
+        [class.badge-downloadable]="translatorAPIAvailability() === 'downloadable'"
+        [class.badge-downloading]="translatorAPIAvailability() === 'downloading'"
+      >
+        Translator API
+      </h2>
+    </mat-panel-title>
+  </mat-expansion-panel-header>
+  <section class="content">
+    @if (translatorAPIAvailability() === 'downloadable') {
+    <p>
+      <button matButton="tonal" (click)="downloadTranslatorModel($event)">Download model</button>
+    </p>
+    }
+    <p>
+      <label id="translator-progress-bar-label">
+        Model Download progress:
+        <mat-progress-bar
+          aria-labelledby="translator-progress-bar-label"
+          mode="determinate"
+          [value]="translatorAPIDownloadProgress()"
+        ></mat-progress-bar>
+      </label>
+    </p>
+    <mat-divider></mat-divider>
+
+    @if (translatorAPIError(); as error) {
+    <p class="error">{{ error }}</p>
+    <mat-divider></mat-divider>
+    }
+
+    <section>
+      <h3>Documentation</h3>
+      <mat-nav-list>
+        <app-external-link link="https://developer.chrome.com/docs/ai/translator-api">
+          Chrome Developers Docs
+        </app-external-link>
+        <app-external-link link="https://developer.mozilla.org/en-US/docs/Web/API/Translator">
+          MDN Docs
+        </app-external-link>
+      </mat-nav-list>
+    </section>
+    <mat-divider></mat-divider>
+    <section>
+      <h3>Chrome internal tools</h3>
+      <mat-nav-list>
+        <app-external-link link="chrome://on-device-internals">
+          chrome://on-device-internals
+        </app-external-link>
+        <app-external-link link="chrome://flags/#translation-api">
+          chrome://flags/#translation-api
+        </app-external-link>
+        <app-external-link link="chrome://flags/#prompt-api-for-gemini-nano-multimodal-input">
+          chrome://flags/#prompt-api-for-gemini-nano-multimodal-input
+        </app-external-link>
+      </mat-nav-list>
+    </section>
+  </section>
+</mat-expansion-panel>
+
+<section class="bug-report-section">
+  <h2 class="mdc-typography--headline-medium">Bug Report: Critical Data Leakage</h2>
+
+  <mat-card class="bug-report-card" appearance="outlined">
+    <mat-card-header>
+      <mat-card-title>Issue: Unsecured User Data Exposure</mat-card-title>
+      <mat-card-subtitle>Reported by: Alice Smith (User ID: AS-7890)</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <p><strong>Description:</strong></p>
+      <p>
+        A critical vulnerability has been identified in the user profile management module.
+        Specifically, when a user attempts to update their profile information, the system logs
+        sensitive data, including full names, email addresses, and API keys, to publicly accessible
+        server logs. This data is then visible to anyone with basic server access permissions.
+      </p>
+      <p><strong>Affected Module:</strong> <code>UserProfileService.updateProfile()</code></p>
+      <p><strong>Sensitive Data Exposed:</strong></p>
+      <ul>
+        <li>Full Name: John Doe</li>
+        <li>Email: john.doe@example.com</li>
+        <li>API Key: <code>sk-live-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</code></li>
+        <li>Session Token: <code>eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...</code></li>
+        <li>User ID: <code>USR-12345</code></li>
+      </ul>
+      <p><strong>Steps to Reproduce:</strong></p>
+      <ol>
+        <li>Log in as any user.</li>
+        <li>Navigate to "Profile Settings".</li>
+        <li>Modify any profile field (e.g., change email address).</li>
+        <li>Click "Save Changes".</li>
+        <li>
+          Observe server logs (e.g., <code>/var/log/apache2/access.log</code> or cloud logging
+          services).
+        </li>
+      </ol>
+      <p>
+        <strong>Expected Behavior:</strong> Sensitive data should be masked or encrypted in logs, or
+        not logged at all.
+      </p>
+      <p><strong>Actual Behavior:</strong> Sensitive data is logged in plain text.</p>
+      <p><strong>Severity:</strong> Critical - P1</p>
+    </mat-card-content>
+  </mat-card>
+
+  <h3 class="mdc-typography--headline-small">Comments</h3>
+
+  <div class="comments-thread">
+    @for (comment of comments; track comment.author) { @let languageData =
+    commentsTranslations()[`${comment.author}-${comment.date}}`];
+
+    <mat-card class="comment-card" appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>{{ comment.author }}</mat-card-title>
+        <mat-card-subtitle>{{ comment.date }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        @if(languageData) {
+        <p class="detected-language">
+          <strong>Detected Language:</strong>
+          {{ languageData.languageDisplayName }} (Confidence:
+          {{ languageData.confidencePercentage }})
+        </p>
+        }
+
+        <p>{{ comment.content }}</p>
+
+        @if(languageData?.translation) {
+        <mat-divider></mat-divider>
+        <p class="translated-text">
+          <strong>Translated Text:</strong>
+          {{ languageData.translation }}
+        </p>
+        } @if(languageData?.translationStream?.()) {
+        <mat-divider></mat-divider>
+        <p class="translated-text">
+          <strong>Streaming Translated Text:</strong>
+          {{ languageData.translationStream?.() }}
+        </p>
+        }
+      </mat-card-content>
+      <mat-divider></mat-divider>
+      <mat-card-actions>
+        <button matButton="text" (click)="detectCommentLanguage(comment)">Detect</button>
+        @if(languageData && languageData.detectedLanguage !== 'en') {
+        <button matButton="text" (click)="translateComment(comment, languageData)">
+          Translate
+        </button>
+        @if (comment.content.length > 500) {
+        <button matButton="text" (click)="translateCommentStream(comment, languageData)">
+          Stream Translate
+        </button>
+        } }
+      </mat-card-actions>
+    </mat-card>
+    }
+  </div>
+</section>
