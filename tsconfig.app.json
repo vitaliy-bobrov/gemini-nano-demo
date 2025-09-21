@@ -6,6 +6,6 @@
     "outDir": "./out-tsc/app",
     "types": []
   },
-  "include": ["src/**/*.ts", "types/gemini-nano.d.ts", "json-schema"],
+  "include": ["src/**/*.ts", "types/*.d.ts", "json-schema"],
   "exclude": ["src/**/*.spec.ts"]
 }

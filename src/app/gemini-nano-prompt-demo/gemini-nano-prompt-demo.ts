@@ -10,6 +10,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { PromptAPIService } from '../services/prompt-api.service';
 import { AIAPIInfoComponent } from '../shared/ai-api-info/ai-api-info';
 import { APIInfo } from '../shared/api-info';
+import { MarkdownPipe } from '../shared/markdown.pipe';
 import { rawLogInputExamples } from './data';
 
 interface BugReportInfo {
@@ -26,13 +27,14 @@ interface BugReportInfo {
   imports: [
     AIAPIInfoComponent,
     FormsModule,
+    JsonPipe,
+    MarkdownPipe,
     MatButtonModule,
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
     MatProgressSpinnerModule,
     MatSelectModule,
-    JsonPipe,
   ],
 })
 export class GeminiNanoPromptDemoComponent {

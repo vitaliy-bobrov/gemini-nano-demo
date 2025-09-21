@@ -80,7 +80,7 @@
       } @if (bugReportOutput()) {
       <h3>Generated Bug Report:</h3>
       <article class="bug-report-article">
-        {{ bugReportOutput() }}
+        <p [innerHTML]="bugReportOutput() | markdown"></p>
       </article>
       }
     </mat-card-content>
