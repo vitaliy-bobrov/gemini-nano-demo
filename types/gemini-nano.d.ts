@@ -80,6 +80,7 @@ type WriterFormats = 'markdown' | 'plain-text';
 type WriterSize = 'short' | 'medium' | 'long';
 
 interface WriterOptions {
+  outputLanguage?: string;
   tone?: WriterTone;
   format?: WriterFormats;
   length?: WriterSize;
@@ -89,7 +90,7 @@ interface WriterOptions {
 }
 
 interface Writer {
-  availability(): Promise<AiApiAvailability>;
+  availability(options?: WriterOptions): Promise<AiApiAvailability>;
   create(options?: WriterOptions): Promise<Writer>;
   measureInputUsage(text: string, options?: { signal?: AbortSignal }): number;
   write(input: string, options?: { context?: string; signal?: AbortSignal }): Promise<string>;
@@ -107,6 +108,7 @@ type RewriterFormats = 'as-is' | 'markdown' | 'plain-text';
 type RewriterSize = 'as-is' | 'shorter' | 'longer';
 
 interface RewriterOptions {
+  outputLanguage?: string;
   tone?: RewriterTone;
   format?: RewriterFormats;
   length?: RewriterSize;
@@ -116,7 +118,7 @@ interface RewriterOptions {
 }
 
 interface Rewriter {
-  availability(): Promise<AiApiAvailability>;
+  availability(options?: RewriterOptions): Promise<AiApiAvailability>;
   create(options?: RewriterOptions): Promise<Rewriter>;
   measureInputUsage(text: string, options?: { signal?: AbortSignal }): number;
   rewrite(input: string, options?: { context?: string; signal?: AbortSignal }): Promise<string>;
@@ -140,7 +142,7 @@ interface ProofreadCorrection {
 }
 
 interface ProofreadResult {
-  readonly corrected: string;
+  readonly correctedInput: string;
   corrections: readonly ProofreadCorrection[];
 }
 
@@ -156,9 +158,7 @@ interface Proofreader {
   availability(options?: ProofreaderOptions): Promise<AiApiAvailability>;
   create(options?: ProofreaderOptions): Promise<Proofreader>;
   proofread(input: string, options?: { signal?: AbortSignal }): ProofreadResult;
-  measureInputUsage(text: string, options?: { signal?: AbortSignal }): number;
   destroy(): void;
-  readonly inputQuota: number;
 }
 
 type AiApiAvailability = 'unavailable' | 'downloadable' | 'downloading' | 'available';

@@ -16,18 +16,21 @@ declare global {
   providedIn: 'root',
 })
 export class RewriterAPIService extends AiApiBaseService {
+  static readonly DefaultOptions: RewriterOptions = {
+    outputLanguage: 'en'
+  };
   private readonly rewriter = signal<Rewriter | null>(null);
 
-  override async checkAvailability() {
+  override async checkAvailability(options: RewriterOptions = RewriterAPIService.DefaultOptions) {
     if (self.Rewriter) {
-      const result = await self.Rewriter.availability();
+      const result = await self.Rewriter.availability(options);
       this.availabilityStatus.set(result);
     } else {
       this.availabilityStatus.set('unavailable');
     }
   }
 
-  async createRewriter(options: RewriterOptions = {}) {
+  async createRewriter(options: RewriterOptions = RewriterAPIService.DefaultOptions) {
     switch (this.availability()) {
       case 'unavailable':
         throw new Error('Rewriter API is not available.');
@@ -51,7 +54,7 @@ export class RewriterAPIService extends AiApiBaseService {
             },
           });
 
-          await this.checkAvailability();
+          await this.checkAvailability(options);
           this.rewriter.set(rewriter);
         }
         return this.rewriter();
@@ -61,7 +64,7 @@ export class RewriterAPIService extends AiApiBaseService {
     }
   }
 
-  async rewrite(input: string, options?: RewriterOptions, context?: string) {
+  async rewrite(input: string, options: RewriterOptions = RewriterAPIService.DefaultOptions, context?: string) {
     // Recreate rewriter with new options.
     this.destroy();
     const rewriter = await this.createRewriter(options);
@@ -80,7 +83,7 @@ export class RewriterAPIService extends AiApiBaseService {
     return rewriter.rewrite(input, { context });
   }
 
-  async rewriteStreaming(input: string, options?: RewriterOptions, context?: string) {
+  async rewriteStreaming(input: string, options: RewriterOptions = RewriterAPIService.DefaultOptions, context?: string) {
     // Recreate rewriter with new options.
     this.destroy();
     const rewriter = await this.createRewriter(options);

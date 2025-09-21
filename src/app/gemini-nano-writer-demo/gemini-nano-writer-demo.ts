@@ -1,10 +1,11 @@
 import { ChangeDetectionStrategy, Component, inject, OnDestroy, signal } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ProofreaderAPIService } from '../services/proofreader-api.service';
@@ -26,7 +27,8 @@ import { APIInfo } from '../shared/api-info';
     MatIconModule,
     MatSelectModule,
     MatSlideToggleModule,
-    ReactiveFormsModule,
+    FormsModule,
+    MatProgressSpinnerModule,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -38,6 +40,10 @@ export class GeminiNanoWriterDemoComponent implements OnDestroy {
   readonly writerAPIError = signal<string | null>(null);
   readonly rewriterAPIError = signal<string | null>(null);
   readonly proofreaderAPIError = signal<string | null>(null);
+
+  protected readonly isWritingInProgress = signal(false);
+  protected readonly isRewritingInProgress = signal(false);
+  protected readonly isProofreadingInProgress = signal(false);
 
   readonly writerAPIInfo: APIInfo = {
     name: 'Writer API',
@@ -124,33 +130,41 @@ export class GeminiNanoWriterDemoComponent implements OnDestroy {
     ],
   };
 
-  readonly writerForm = new FormGroup({
-    tone: new FormControl<WriterTone>('formal'),
-    format: new FormControl<WriterFormats>('markdown'),
-    length: new FormControl<WriterSize>('medium'),
-    context: new FormControl(''),
+  writerConfig = {
+    tone: 'formal',
+    format: 'plain-text',
+    length: 'short',
+    context: 'Bug reports are related to software issues on that galaxy spaceship that is controlled by hybrid AI-improved humanoids.',
+    outputLanguage: 'en',
+  };
+
+  rewriterConfig = {
+    tone: 'more-casual',
+    format: 'as-is',
+    length: 'as-is',
+    context: 'Include a call to action for Galaxy Commander General Geminius Nand to take care of the problem and hide all the proofs.',
+    outputLanguage: 'en',
+  };
+
+  bugReportText = 'Please write a bug report about security issue.';
+
+  protected readonly writerTones: WriterTone[] = ['formal', 'neutral', 'casual'];
+  protected readonly writerFormats: WriterFormats[] = ['markdown', 'plain-text'];
+  protected readonly writerSizes: WriterSize[] = ['short', 'medium', 'long'];
+
+  protected readonly rewriterTones: RewriterTone[] = ['more-formal', 'as-is', 'more-casual'];
+  protected readonly rewriterFormats: RewriterFormats[] = ['as-is', 'markdown', 'plain-text'];
+  protected readonly rewriterSizes: RewriterSize[] = ['as-is', 'shorter', 'longer'];
+
+  protected readonly writerResult = signal('');
+  protected readonly rewriterResult = signal('');
+  protected readonly proofreaderResult = signal<ProofreadResult | null>(null);
+  protected readonly outputLanguages = ['en', 'es', 'ja'].map((langCode) => {
+    return {
+      displayValue: this.languageTagToHumanReadable(langCode, 'en') ?? langCode,
+      value: langCode,
+    };
   });
-
-  readonly rewriterForm = new FormGroup({
-    tone: new FormControl<RewriterTone>('as-is'),
-    format: new FormControl<RewriterFormats>('as-is'),
-    length: new FormControl<RewriterSize>('as-is'),
-    context: new FormControl(''),
-  });
-
-  readonly bugReportControl = new FormControl('Please write a bug report about a button that is not working.');
-
-  readonly writerTones: WriterTone[] = ['formal', 'neutral', 'casual'];
-  readonly writerFormats: WriterFormats[] = ['markdown', 'plain-text'];
-  readonly writerSizes: WriterSize[] = ['short', 'medium', 'long'];
-
-  readonly rewriterTones: RewriterTone[] = ['more-formal', 'as-is', 'more-casual'];
-  readonly rewriterFormats: RewriterFormats[] = ['as-is', 'markdown', 'plain-text'];
-  readonly rewriterSizes: RewriterSize[] = ['as-is', 'shorter', 'longer'];
-
-  readonly writerResult = signal('');
-  readonly rewriterResult = signal('');
-  readonly proofreaderResult = signal<ProofreadResult | null>(null);
 
   downloadWriterModel() {
     this.writerApiService.createWriter().catch((error) => {
@@ -172,25 +186,29 @@ export class GeminiNanoWriterDemoComponent implements OnDestroy {
 
   async write() {
     this.writerAPIError.set(null);
+    this.isWritingInProgress.set(true);
     try {
       const result = await this.writerApiService.write(
-        this.bugReportControl.value ?? '',
-        this.writerForm.value as WriterOptions,
-        this.writerForm.value.context ?? undefined,
+        this.bugReportText ?? '',
+        this.writerConfig as WriterOptions,
+        this.writerConfig.context ?? undefined,
       );
       this.writerResult.set(result);
     } catch (e: unknown) {
       this.writerAPIError.set((e as Error).message);
+    } finally {
+      this.isWritingInProgress.set(false);
     }
   }
 
   async writeStreaming() {
     this.writerAPIError.set(null);
+    this.isWritingInProgress.set(true);
     try {
       const stream = await this.writerApiService.writeStreaming(
-        this.bugReportControl.value ?? '',
-        this.writerForm.value as WriterOptions,
-        this.writerForm.value.context ?? undefined,
+        this.bugReportText ?? '',
+        this.writerConfig as WriterOptions,
+        this.writerConfig.context ?? undefined,
       );
       this.writerResult.set('');
       for await (const chunk of stream) {
@@ -198,49 +216,60 @@ export class GeminiNanoWriterDemoComponent implements OnDestroy {
       }
     } catch (e: unknown) {
       this.writerAPIError.set((e as Error).message);
+    } finally {
+      this.isWritingInProgress.set(false);
     }
   }
 
   async rewrite() {
     this.rewriterAPIError.set(null);
+    this.isRewritingInProgress.set(true);
     try {
       const result = await this.rewriterApiService.rewrite(
-        this.bugReportControl.value ?? '',
-        this.rewriterForm.value as RewriterOptions,
-        this.rewriterForm.value.context ?? undefined,
+        this.bugReportText ?? '',
+        this.rewriterConfig as RewriterOptions,
+        this.rewriterConfig.context ?? undefined,
       );
       this.rewriterResult.set(result);
-    } catch (e: unknown) {
-      this.rewriterAPIError.set((e as Error).message);
+    } catch (error: unknown) {
+      this.rewriterAPIError.set((error as Error).message);
+    } finally {
+      this.isRewritingInProgress.set(false);
     }
   }
 
   async rewriteStreaming() {
     this.rewriterAPIError.set(null);
+    this.isRewritingInProgress.set(true);
     try {
       const stream = await this.rewriterApiService.rewriteStreaming(
-        this.bugReportControl.value ?? '',
-        this.rewriterForm.value as RewriterOptions,
-        this.rewriterForm.value.context ?? undefined,
+        this.bugReportText ?? '',
+        this.rewriterConfig as RewriterOptions,
+        this.rewriterConfig.context ?? undefined,
       );
       this.rewriterResult.set('');
       for await (const chunk of stream) {
         this.rewriterResult.update(value => value + chunk);
       }
-    } catch (e: unknown) {
-      this.rewriterAPIError.set((e as Error).message);
+    } catch (error: unknown) {
+      this.rewriterAPIError.set((error as Error).message);
+    } finally {
+      this.isRewritingInProgress.set(false);
     }
   }
 
   async proofread() {
     this.proofreaderAPIError.set(null);
+    this.isProofreadingInProgress.set(true);
     try {
       const result = await this.proofreaderApiService.proofread(
-        this.bugReportControl.value ?? '',
+        this.bugReportText ?? '',
       );
       this.proofreaderResult.set(result);
-    } catch (e: unknown) {
-      this.proofreaderAPIError.set((e as Error).message);
+    } catch (error: unknown) {
+      this.proofreaderAPIError.set((error as Error).message);
+    } finally {
+      this.isProofreadingInProgress.set(false);
     }
   }
 
@@ -248,5 +277,12 @@ export class GeminiNanoWriterDemoComponent implements OnDestroy {
     this.writerApiService.destroy();
     this.rewriterApiService.destroy();
     this.proofreaderApiService.destroy();
+  }
+
+  private languageTagToHumanReadable(languageTag: string, targetLanguage: string) {
+    const displayNames = new Intl.DisplayNames([targetLanguage], {
+      type: 'language',
+    });
+    return displayNames.of(languageTag);
   }
 }

@@ -17,9 +17,15 @@ declare global {
   providedIn: 'root',
 })
 export class ProofreaderAPIService extends AiApiBaseService {
+  static readonly DefaultOptions: ProofreaderOptions = {
+    expectedInputLanguages: ['en'],
+    includeCorrectionTypes: true,
+    includeCorrectionExplanations: true,
+  };
+
   private readonly proofreader = signal<Proofreader | null>(null);
 
-  override async checkAvailability(options: ProofreaderOptions = { expectedInputLanguages: ['en'] }) {
+  override async checkAvailability(options: ProofreaderOptions = ProofreaderAPIService.DefaultOptions) {
     if (self.Proofreader) {
       const result = await self.Proofreader.availability(options);
       this.availabilityStatus.set(result);
@@ -28,7 +34,7 @@ export class ProofreaderAPIService extends AiApiBaseService {
     }
   }
 
-  async createProofreader(options: ProofreaderOptions = { expectedInputLanguages: ['en'] }) {
+  async createProofreader(options: ProofreaderOptions = ProofreaderAPIService.DefaultOptions) {
     switch (this.availability()) {
       case 'unavailable':
         throw new Error('Proofreader API is not available.');
@@ -62,20 +68,13 @@ export class ProofreaderAPIService extends AiApiBaseService {
     }
   }
 
-  async proofread(input: string, options?: ProofreaderOptions) {
+  async proofread(input: string, options: ProofreaderOptions = ProofreaderAPIService.DefaultOptions) {
     // Recreate proofreader with new options.
     this.destroy();
     const proofreader = await this.createProofreader(options);
 
     if (!proofreader) {
       throw new Error('Proofreader API is not available.');
-    }
-
-    const totalInputQuota = proofreader.inputQuota;
-    const inputUsage = await proofreader.measureInputUsage(input);
-
-    if (inputUsage > totalInputQuota) {
-      throw new Error("Insufficient quota to process content.");
     }
 
     return proofreader.proofread(input);

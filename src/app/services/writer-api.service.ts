@@ -16,18 +16,21 @@ declare global {
   providedIn: 'root',
 })
 export class WriterAPIService extends AiApiBaseService {
+  static readonly DefaultOptions: WriterOptions = {
+    outputLanguage: 'en'
+  };
   private readonly writer = signal<Writer | null>(null);
 
-  override async checkAvailability() {
+  override async checkAvailability(options: WriterOptions = WriterAPIService.DefaultOptions) {
     if (self.Writer) {
-      const result = await self.Writer.availability();
+      const result = await self.Writer.availability(options);
       this.availabilityStatus.set(result);
     } else {
       this.availabilityStatus.set('unavailable');
     }
   }
 
-  async createWriter(options: WriterOptions = {}) {
+  async createWriter(options: WriterOptions = WriterAPIService.DefaultOptions) {
     switch (this.availability()) {
       case 'unavailable':
         throw new Error('Writer API is not available.');
@@ -51,7 +54,7 @@ export class WriterAPIService extends AiApiBaseService {
             },
           });
 
-          await this.checkAvailability();
+          await this.checkAvailability(options);
           this.writer.set(writer);
         }
         return this.writer();
@@ -61,7 +64,7 @@ export class WriterAPIService extends AiApiBaseService {
     }
   }
 
-  async write(input: string, options?: WriterOptions, context?: string) {
+  async write(input: string, options: WriterOptions = WriterAPIService.DefaultOptions, context?: string) {
     // Recreate writer with new options.
     this.destroy();
     const writer = await this.createWriter(options);
@@ -80,7 +83,7 @@ export class WriterAPIService extends AiApiBaseService {
     return writer.write(input, { context });
   }
 
-  async writeStreaming(input: string, options?: WriterOptions, context?: string) {
+  async writeStreaming(input: string, options: WriterOptions = WriterAPIService.DefaultOptions, context?: string) {
     // Recreate writer with new options.
     this.destroy();
     const writer = await this.createWriter(options);

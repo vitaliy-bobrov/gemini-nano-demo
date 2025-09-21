@@ -30,16 +30,73 @@
   <h3>Help to write Bug Report</h3>
   <mat-form-field class="context-field">
     <mat-label>Bug Report</mat-label>
-    <textarea matInput [formControl]="bugReportControl" rows="5"></textarea>
+    <textarea matInput name="bugReport" [(ngModel)]="bugReportText" rows="5"></textarea>
   </mat-form-field>
 </section>
 
-<form class="options-form" [formGroup]="writerForm">
-  <fieldset>
+<form class="options-form">
+  <section>
+    @if (isWritingInProgress() && !writerResult()) {
+    <mat-spinner diameter="36"></mat-spinner>
+    } @if (writerResult()) {
+    <div class="result">
+      <h3>
+        <span>Writer Result</span>
+        @if (isWritingInProgress()) {
+        <mat-spinner diameter="24"></mat-spinner>
+        }
+      </h3>
+      <p>{{ writerResult() }}</p>
+    </div>
+    } @if (isRewritingInProgress() && !rewriterResult()) {
+    <mat-spinner diameter="36"></mat-spinner>
+    } @if (rewriterResult()) {
+    <div class="result">
+      <h3>
+        <span>Rewriter Result</span>
+        @if (isRewritingInProgress()) {
+        <mat-spinner diameter="24"></mat-spinner>
+        }
+      </h3>
+      <p>{{ rewriterResult() }}</p>
+    </div>
+    } @if (isProofreadingInProgress() && !proofreaderResult()) {
+    <mat-spinner diameter="36"></mat-spinner>
+    } @if (proofreaderResult()) {
+    <div class="result">
+      <h3>
+        <span>Proofreader Result</span>
+        @if (isProofreadingInProgress()) {
+        <mat-spinner diameter="24"></mat-spinner>
+        }
+      </h3>
+      <p>{{ proofreaderResult()?.correctedInput }}</p>
+      <h4>Corrections:</h4>
+      <ul>
+        @for (correction of proofreaderResult()?.corrections; track correction.startIndex) {
+        <li>
+          {{ correction.type }}: {{ correction.explanation }} ({{ correction.startIndex }} -
+          {{ correction.endIndex }})
+        </li>
+        } @empty {
+        <li>No corrections</li>
+        }
+      </ul>
+    </div>
+    }
+  </section>
+  <div class="actions">
+    <button type="button" matButton="text" (click)="write()">Write</button>
+    <button type="button" matButton="text" (click)="writeStreaming()">Write Streaming</button>
+    <button type="button" matButton="text" (click)="rewrite()">Rewrite</button>
+    <button type="button" matButton="text" (click)="rewriteStreaming()">Rewrite Streaming</button>
+    <button type="button" matButton="text" (click)="proofread()">Proofread</button>
+  </div>
+  <fieldset class="col-4">
     <legend>Writer API configuration</legend>
     <mat-form-field>
       <mat-label>Tone</mat-label>
-      <mat-select formControlName="tone">
+      <mat-select name="writerTone" [(ngModel)]="writerConfig.tone">
         @for (tone of writerTones; track tone) {
         <mat-option [value]="tone">{{ tone }}</mat-option>
         }
@@ -47,7 +104,7 @@
     </mat-form-field>
     <mat-form-field>
       <mat-label>Format</mat-label>
-      <mat-select formControlName="format">
+      <mat-select name="writerFormat" [(ngModel)]="writerConfig.format">
         @for (format of writerFormats; track format) {
         <mat-option [value]="format">{{ format }}</mat-option>
         }
@@ -55,22 +112,30 @@
     </mat-form-field>
     <mat-form-field>
       <mat-label>Length</mat-label>
-      <mat-select formControlName="length">
+      <mat-select name="writerLength" [(ngModel)]="writerConfig.length">
         @for (size of writerSizes; track size) {
         <mat-option [value]="size">{{ size }}</mat-option>
         }
       </mat-select>
     </mat-form-field>
+    <mat-form-field>
+      <mat-label>Output Language</mat-label>
+      <mat-select name="writerOutputLanguage" [(ngModel)]="writerConfig.outputLanguage">
+        @for (lang of outputLanguages; track lang.value) {
+        <mat-option [value]="lang.value">{{ lang.displayValue }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
     <mat-form-field class="context-field">
       <mat-label>Context</mat-label>
-      <textarea matInput formControlName="context"></textarea>
+      <textarea matInput name="writerContext" [(ngModel)]="writerConfig.context"></textarea>
     </mat-form-field>
   </fieldset>
-  <fieldset>
+  <fieldset class="col-4">
     <legend>Rewriter API configuration</legend>
     <mat-form-field>
       <mat-label>Tone</mat-label>
-      <mat-select formControlName="tone">
+      <mat-select name="rewriterTone" [(ngModel)]="rewriterConfig.tone">
         @for (tone of rewriterTones; track tone) {
         <mat-option [value]="tone">{{ tone }}</mat-option>
         }
@@ -78,7 +143,7 @@
     </mat-form-field>
     <mat-form-field>
       <mat-label>Format</mat-label>
-      <mat-select formControlName="format">
+      <mat-select name="rewriterFormat" [(ngModel)]="rewriterConfig.format">
         @for (format of rewriterFormats; track format) {
         <mat-option [value]="format">{{ format }}</mat-option>
         }
@@ -86,48 +151,23 @@
     </mat-form-field>
     <mat-form-field>
       <mat-label>Length</mat-label>
-      <mat-select formControlName="length">
+      <mat-select name="rewriterLength" [(ngModel)]="rewriterConfig.length">
         @for (size of rewriterSizes; track size) {
         <mat-option [value]="size">{{ size }}</mat-option>
         }
       </mat-select>
     </mat-form-field>
+    <mat-form-field>
+      <mat-label>Output Language</mat-label>
+      <mat-select name="rewriterOutputLanguage" [(ngModel)]="rewriterConfig.outputLanguage">
+        @for (lang of outputLanguages; track lang.value) {
+        <mat-option [value]="lang.value">{{ lang.displayValue }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
     <mat-form-field class="context-field">
       <mat-label>Context</mat-label>
-      <textarea matInput formControlName="context"></textarea>
+      <textarea matInput name="rewriterContext" [(ngModel)]="rewriterConfig.context"></textarea>
     </mat-form-field>
   </fieldset>
-  <div class="actions">
-    <button matButton="text" (click)="write()">Write</button>
-    <button matButton="text" (click)="writeStreaming()">Write Streaming</button>
-    <button matButton="text" (click)="rewrite()">Rewrite</button>
-    <button matButton="text" (click)="rewriteStreaming()">Rewrite Streaming</button>
-    <button matButton="text" (click)="proofread()">Proofread</button>
-  </div>
 </form>
-
-@if (writerResult()) {
-<div class="result">
-  <h3>Writer Result</h3>
-  <p>{{ writerResult() }}</p>
-</div>
-} @if (rewriterResult()) {
-<div class="result">
-  <h3>Rewriter Result</h3>
-  <p>{{ rewriterResult() }}</p>
-</div>
-} @if (proofreaderResult()) {
-<div class="result">
-  <h3>Proofreader Result</h3>
-  <p>Corrected: {{ proofreaderResult()?.corrected }}</p>
-  <h4>Corrections:</h4>
-  <ul>
-    @for (correction of proofreaderResult()?.corrections; track correction) {
-    <li>
-      {{ correction.type }}: {{ correction.explanation }} ({{ correction.startIndex }} -
-      {{ correction.endIndex }})
-    </li>
-    }
-  </ul>
-</div>
-}

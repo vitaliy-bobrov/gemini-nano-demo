@@ -116,7 +116,7 @@ export class GeminiNanoSummarizerDemoComponent implements OnDestroy {
 
     const { context, ...options } = this.formValue;
     const input = this.createSummarizerInput(comments);
-    console.log(options);
+
     try {
       const summaryStream = await this.summarizerAPIService.summarizeStreaming(
         input,
