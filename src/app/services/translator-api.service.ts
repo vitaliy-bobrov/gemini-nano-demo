@@ -9,7 +9,7 @@ declare global {
 }
 
 /**
- * Service to interact with the LanguageDetector API.
+ * Service to interact with the Translator API.
  * documentation: https://developer.chrome.com/docs/ai/translator-api
  * MDN: https://developer.mozilla.org/en-US/docs/Web/API/Translator
  */

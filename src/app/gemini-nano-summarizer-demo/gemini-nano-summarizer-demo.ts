@@ -1,37 +1,28 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnDestroy, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatListModule } from '@angular/material/list';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { SummarizerAPIService } from '../services/summarizer-api.service';
-import { ExternalLinkComponent } from '../shared/external-link/external-link';
+import { AIAPIInfoComponent } from '../shared/ai-api-info/ai-api-info';
+import { APIInfo } from '../shared/api-info';
 import { Comment } from '../shared/comment';
 import { COMMENTS } from './data';
 
 @Component({
-  selector: 'app-gemini-nano-summarizer-demo',
+  selector: 'gmd-gemini-nano-summarizer-demo',
   templateUrl: './gemini-nano-summarizer-demo.html',
   styleUrl: './gemini-nano-summarizer-demo.scss',
   imports: [
-    ExternalLinkComponent,
+    AIAPIInfoComponent,
     FormsModule,
-    MatBadgeModule,
     MatButtonModule,
     MatCardModule,
-    MatDividerModule,
-    MatExpansionModule,
     MatFormFieldModule,
     MatInputModule,
-    MatListModule,
-    MatProgressBarModule,
     MatProgressSpinnerModule,
     MatSelectModule,
   ],
@@ -40,20 +31,38 @@ import { COMMENTS } from './data';
 export class GeminiNanoSummarizerDemoComponent implements OnDestroy {
   protected readonly comments = COMMENTS;
   private readonly summarizerAPIService = inject(SummarizerAPIService);
-
-  protected readonly summarizerAPIAvailability = computed(() => {
-    return this.summarizerAPIService.availability();
-  });
-  protected readonly summarizerAPIStatusText = computed(() => {
-    return `Status: ${this.summarizerAPIService.availability()}`;
-  });
-  protected readonly summarizerAPIDownloadProgress = computed(() => {
-    if (this.summarizerAPIAvailability() === 'available') {
-      return 100
-    }
-    return this.summarizerAPIService.downloadProgress();
-  });
   protected readonly summarizerAPIError = signal<string | null>(null);
+
+  protected readonly summarizerAPIInfo: APIInfo = {
+    name: 'Summarizer API',
+    availability: this.summarizerAPIService.availability,
+    downloadProgress: this.summarizerAPIService.downloadProgress,
+    error: this.summarizerAPIError,
+    docsLinks: [
+      {
+        link: 'https://developer.chrome.com/docs/ai/summarizer-api',
+        name: 'Chrome Developers Docs',
+      },
+      {
+        link: 'https://developer.mozilla.org/en-US/docs/Web/API/Summarizer',
+        name: 'MDN Docs',
+      },
+    ],
+    chromeInternalLinks: [
+      {
+        link: 'chrome://on-device-internals',
+        name: 'chrome://on-device-internals',
+      },
+      {
+        link: 'chrome://flags/#summarization-api-for-gemini-nano',
+        name: 'chrome://flags/#summarization-api-for-gemini-nano',
+      },
+      {
+        link: 'chrome://flags/#prompt-api-for-gemini-nano-multimodal-input',
+        name: 'chrome://flags/#prompt-api-for-gemini-nano-multimodal-input',
+      },
+    ],
+  };
   protected readonly summary = signal<string | null>(null);
   protected readonly isSummaryInProgress = signal(false);
 
@@ -72,9 +81,7 @@ export class GeminiNanoSummarizerDemoComponent implements OnDestroy {
     format: 'plain-text',
   };
 
-  protected downloadSummarizerModel(event: Event) {
-    event.preventDefault();
-
+  protected downloadSummarizerModel() {
     this.summarizerAPIService.createSummarizer().catch((error) => {
       this.summarizerAPIError.set(error ? error.message : 'Unknown error occurred');
     });

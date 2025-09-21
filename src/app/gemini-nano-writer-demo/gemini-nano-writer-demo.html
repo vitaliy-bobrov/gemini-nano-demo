@@ -1,0 +1,133 @@
+<gmd-ai-api-info
+  [name]="writerAPIInfo.name"
+  [availability]="writerAPIInfo.availability()"
+  [downloadProgress]="writerAPIInfo.downloadProgress()"
+  [error]="writerAPIInfo.error()"
+  [docsLinks]="writerAPIInfo.docsLinks"
+  [chromeInternalLinks]="writerAPIInfo.chromeInternalLinks"
+  (download)="downloadWriterModel()"
+/>
+<gmd-ai-api-info
+  [name]="rewriterAPIInfo.name"
+  [availability]="rewriterAPIInfo.availability()"
+  [downloadProgress]="rewriterAPIInfo.downloadProgress()"
+  [error]="rewriterAPIInfo.error()"
+  [docsLinks]="rewriterAPIInfo.docsLinks"
+  [chromeInternalLinks]="rewriterAPIInfo.chromeInternalLinks"
+  (download)="downloadRewriterModel()"
+/>
+<gmd-ai-api-info
+  [name]="proofreaderAPIInfo.name"
+  [availability]="proofreaderAPIInfo.availability()"
+  [downloadProgress]="proofreaderAPIInfo.downloadProgress()"
+  [error]="proofreaderAPIInfo.error()"
+  [docsLinks]="proofreaderAPIInfo.docsLinks"
+  [chromeInternalLinks]="proofreaderAPIInfo.chromeInternalLinks"
+  (download)="downloadProofreaderModel()"
+/>
+
+<section class="bug-report-section">
+  <h3>Help to write Bug Report</h3>
+  <mat-form-field class="context-field">
+    <mat-label>Bug Report</mat-label>
+    <textarea matInput [formControl]="bugReportControl" rows="5"></textarea>
+  </mat-form-field>
+</section>
+
+<form class="options-form" [formGroup]="writerForm">
+  <fieldset>
+    <legend>Writer API configuration</legend>
+    <mat-form-field>
+      <mat-label>Tone</mat-label>
+      <mat-select formControlName="tone">
+        @for (tone of writerTones; track tone) {
+        <mat-option [value]="tone">{{ tone }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Format</mat-label>
+      <mat-select formControlName="format">
+        @for (format of writerFormats; track format) {
+        <mat-option [value]="format">{{ format }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Length</mat-label>
+      <mat-select formControlName="length">
+        @for (size of writerSizes; track size) {
+        <mat-option [value]="size">{{ size }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="context-field">
+      <mat-label>Context</mat-label>
+      <textarea matInput formControlName="context"></textarea>
+    </mat-form-field>
+  </fieldset>
+  <fieldset>
+    <legend>Rewriter API configuration</legend>
+    <mat-form-field>
+      <mat-label>Tone</mat-label>
+      <mat-select formControlName="tone">
+        @for (tone of rewriterTones; track tone) {
+        <mat-option [value]="tone">{{ tone }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Format</mat-label>
+      <mat-select formControlName="format">
+        @for (format of rewriterFormats; track format) {
+        <mat-option [value]="format">{{ format }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Length</mat-label>
+      <mat-select formControlName="length">
+        @for (size of rewriterSizes; track size) {
+        <mat-option [value]="size">{{ size }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="context-field">
+      <mat-label>Context</mat-label>
+      <textarea matInput formControlName="context"></textarea>
+    </mat-form-field>
+  </fieldset>
+  <div class="actions">
+    <button matButton="text" (click)="write()">Write</button>
+    <button matButton="text" (click)="writeStreaming()">Write Streaming</button>
+    <button matButton="text" (click)="rewrite()">Rewrite</button>
+    <button matButton="text" (click)="rewriteStreaming()">Rewrite Streaming</button>
+    <button matButton="text" (click)="proofread()">Proofread</button>
+  </div>
+</form>
+
+@if (writerResult()) {
+<div class="result">
+  <h3>Writer Result</h3>
+  <p>{{ writerResult() }}</p>
+</div>
+} @if (rewriterResult()) {
+<div class="result">
+  <h3>Rewriter Result</h3>
+  <p>{{ rewriterResult() }}</p>
+</div>
+} @if (proofreaderResult()) {
+<div class="result">
+  <h3>Proofreader Result</h3>
+  <p>Corrected: {{ proofreaderResult()?.corrected }}</p>
+  <h4>Corrections:</h4>
+  <ul>
+    @for (correction of proofreaderResult()?.corrections; track correction) {
+    <li>
+      {{ correction.type }}: {{ correction.explanation }} ({{ correction.startIndex }} -
+      {{ correction.endIndex }})
+    </li>
+    }
+  </ul>
+</div>
+}

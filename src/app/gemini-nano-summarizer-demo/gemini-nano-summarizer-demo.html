@@ -1,71 +1,12 @@
-<mat-expansion-panel>
-  <mat-expansion-panel-header>
-    <mat-panel-title>
-      <h2
-        matBadgeSize="large"
-        [matBadge]="summarizerAPIStatusText()"
-        [matBadgeOverlap]="false"
-        [class.badge-available]="summarizerAPIAvailability() === 'available'"
-        [class.badge-unavailable]="summarizerAPIAvailability() === 'unavailable'"
-        [class.badge-checking]="summarizerAPIAvailability() === 'checking'"
-        [class.badge-downloadable]="summarizerAPIAvailability() === 'downloadable'"
-        [class.badge-downloading]="summarizerAPIAvailability() === 'downloading'"
-      >
-        Summarizer API
-      </h2>
-    </mat-panel-title>
-  </mat-expansion-panel-header>
-  <section class="content">
-    @if (summarizerAPIAvailability() === 'downloadable') {
-    <p>
-      <button matButton="tonal" (click)="downloadSummarizerModel($event)">Download model</button>
-    </p>
-    }
-    <p>
-      <label id="progress-bar-label">
-        Model Download progress:
-        <mat-progress-bar
-          aria-labelledby="progress-bar-label"
-          mode="determinate"
-          [value]="summarizerAPIDownloadProgress()"
-        ></mat-progress-bar>
-      </label>
-    </p>
-    <mat-divider></mat-divider>
-
-    @if (summarizerAPIError(); as error) {
-    <p class="error">{{ error }}</p>
-    <mat-divider></mat-divider>
-    }
-
-    <section>
-      <h3>Documentation</h3>
-      <mat-nav-list>
-        <app-external-link link="https://developer.chrome.com/docs/ai/summarizer-api">
-          Chrome Developers Docs
-        </app-external-link>
-        <app-external-link link="https://developer.mozilla.org/en-US/docs/Web/API/Summarizer">
-          MDN Docs
-        </app-external-link>
-      </mat-nav-list>
-    </section>
-    <mat-divider></mat-divider>
-    <section>
-      <h3>Chrome internal tools</h3>
-      <mat-nav-list>
-        <app-external-link link="chrome://on-device-internals">
-          chrome://on-device-internals
-        </app-external-link>
-        <app-external-link link="chrome://flags/#summarization-api-for-gemini-nano">
-          chrome://flags/#summarization-api-for-gemini-nano
-        </app-external-link>
-        <app-external-link link="chrome://flags/#prompt-api-for-gemini-nano-multimodal-input">
-          chrome://flags/#prompt-api-for-gemini-nano-multimodal-input
-        </app-external-link>
-      </mat-nav-list>
-    </section>
-  </section>
-</mat-expansion-panel>
+<gmd-ai-api-info
+  [name]="summarizerAPIInfo.name"
+  [availability]="summarizerAPIInfo.availability()"
+  [downloadProgress]="summarizerAPIInfo.downloadProgress()"
+  [error]="summarizerAPIInfo.error()"
+  [docsLinks]="summarizerAPIInfo.docsLinks"
+  [chromeInternalLinks]="summarizerAPIInfo.chromeInternalLinks"
+  (download)="downloadSummarizerModel()"
+/>
 
 <section class="bug-report-section">
   <h2 class="mdc-typography--headline-medium">Technical Support Tickets</h2>
@@ -113,15 +54,10 @@
     </mat-form-field>
 
     <div class="form-actions">
-      <button type="button" mat-raised-button color="primary" (click)="summarizeComments(comments)">
+      <button type="button" matButton="text" (click)="summarizeComments(comments)">
         Summarize
       </button>
-      <button
-        type="button"
-        mat-raised-button
-        color="primary"
-        (click)="summarizeCommentsStream(comments)"
-      >
+      <button type="button" matButton="text" (click)="summarizeCommentsStream(comments)">
         Stream Summarize
       </button>
     </div>

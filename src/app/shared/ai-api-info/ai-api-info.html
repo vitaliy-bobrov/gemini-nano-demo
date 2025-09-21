@@ -1,0 +1,60 @@
+<mat-expansion-panel>
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      <h2
+        matBadgeSize="large"
+        [matBadge]="statusText()"
+        [matBadgeOverlap]="false"
+        [class.badge-available]="availability() === 'available'"
+        [class.badge-unavailable]="availability() === 'unavailable'"
+        [class.badge-checking]="availability() === 'checking'"
+        [class.badge-downloadable]="availability() === 'downloadable'"
+        [class.badge-downloading]="availability() === 'downloading'"
+      >
+        {{ name() }}
+      </h2>
+    </mat-panel-title>
+  </mat-expansion-panel-header>
+  <section class="content">
+    @if (availability() === 'downloadable') {
+    <p>
+      <button matButton="tonal" (click)="downloadModel($event)">Download model</button>
+    </p>
+    }
+    <p>
+      <label id="progress-bar-label">
+        Model Download progress:
+        <mat-progress-bar
+          aria-labelledby="progress-bar-label"
+          mode="determinate"
+          [value]="downloadProgress()"
+        ></mat-progress-bar>
+      </label>
+    </p>
+    <mat-divider></mat-divider>
+
+    @if (error(); as error) {
+    <p class="error">{{ error }}</p>
+    <mat-divider></mat-divider>
+    } @if (docsLinks().length) {
+    <section>
+      <h3>Documentation</h3>
+      <mat-nav-list>
+        @for (doc of docsLinks(); track doc.link) {
+        <gmd-external-link [link]="doc.link">{{ doc.name }}</gmd-external-link>
+        }
+      </mat-nav-list>
+    </section>
+    <mat-divider></mat-divider>
+    } @if (chromeInternalLinks().length) {
+    <section>
+      <h3>Chrome internal tools</h3>
+      <mat-nav-list>
+        @for (chromeLink of chromeInternalLinks(); track chromeLink.link) {
+        <gmd-external-link [link]="chromeLink.link">{{ chromeLink.name }}</gmd-external-link>
+        }
+      </mat-nav-list>
+    </section>
+    }
+  </section>
+</mat-expansion-panel>

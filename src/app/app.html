@@ -4,7 +4,7 @@
     <mat-nav-list>
       <a
         mat-list-item
-        routerLink="/genimi-nano-translator-demo"
+        routerLink="/gemini-nano-translator-demo"
         routerLinkActive
         #rla="routerLinkActive"
         [activated]="rla.isActive"
@@ -21,6 +21,16 @@
       >
         <mat-icon matListItemIcon>summarize</mat-icon>
         <div matListItemTitle>Summarizer Demo</div>
+      </a>
+      <a
+        mat-list-item
+        routerLink="/gemini-nano-writer-demo"
+        routerLinkActive
+        #rla3="routerLinkActive"
+        [activated]="rla3.isActive"
+      >
+        <mat-icon matListItemIcon>edit</mat-icon>
+        <div matListItemTitle>Writer Demo</div>
       </a>
     </mat-nav-list>
   </mat-sidenav>

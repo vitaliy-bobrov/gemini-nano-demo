@@ -1,15 +1,12 @@
 
-import { ChangeDetectionStrategy, Component, computed, inject, OnDestroy, signal, WritableSignal } from '@angular/core';
-import { MatBadgeModule } from '@angular/material/badge';
+import { ChangeDetectionStrategy, Component, inject, OnDestroy, signal, WritableSignal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
-import { MatExpansionModule } from '@angular/material/expansion';
-import { MatListModule } from '@angular/material/list';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { DetectionResult, LanguageDetectorAPIService } from '../services/language-detector-api.service';
 import { TranslatorAPIService } from '../services/translator-api.service';
-import { ExternalLinkComponent } from '../shared/external-link/external-link';
+import { AIAPIInfoComponent } from '../shared/ai-api-info/ai-api-info';
+import { APIInfo } from '../shared/api-info';
 import { Comment } from '../shared/comment';
 import { COMMENTS } from './data';
 
@@ -19,18 +16,14 @@ type CommentsTranslationState = DetectionResult & {
 }
 
 @Component({
-  selector: 'app-gemini-nano-translator-demo',
+  selector: 'gmd-gemini-nano-translator-demo',
   templateUrl: './gemini-nano-translator-demo.html',
   styleUrl: './gemini-nano-translator-demo.scss',
   imports: [
-    ExternalLinkComponent,
-    MatBadgeModule,
+    AIAPIInfoComponent,
     MatButtonModule,
     MatCardModule,
     MatDividerModule,
-    MatExpansionModule,
-    MatListModule,
-    MatProgressBarModule,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -40,50 +33,70 @@ export class GeminiNanoTranslatorDemoComponent implements OnDestroy {
     LanguageDetectorAPIService
   );
   private readonly translatorAPIService = inject(TranslatorAPIService);
-  protected readonly languageDetectorAPIAvailability = computed(() => {
-    return this.languageDetectorAPIService.availability();
-  });
-  protected readonly languageDetectorAPIStatusText = computed(() => {
-    return `Status: ${this.languageDetectorAPIService.availability()}`;
-  });
-  protected readonly languageDetectorAPIDownloadProgress = computed(() => {
-    if (this.languageDetectorAPIAvailability() === 'available') {
-      return 100
-    }
-    return this.languageDetectorAPIService.downloadProgress();
-  });
   protected readonly languageDetectorAPIError = signal<string | null>(null);
-
-  protected readonly translatorAPIAvailability = computed(() => {
-    return this.translatorAPIService.availability();
-  });
-  protected readonly translatorAPIStatusText = computed(() => {
-    return `Status: ${this.translatorAPIService.availability()}`;
-  });
-  protected readonly translatorAPIDownloadProgress = computed(() => {
-    if (this.translatorAPIAvailability() === 'available') {
-      return 100
-    }
-    return this.translatorAPIService.downloadProgress();
-  });
   protected readonly translatorAPIError = signal<string | null>(null);
 
-  protected readonly badgeColorClass = computed(() => {
-    switch (this.languageDetectorAPIAvailability()) {
-      case 'available':
-        return 'badge-available';
-      case 'unavailable':
-        return 'badge-unavailable';
-      case 'checking':
-        return 'badge-checking';
-      case 'downloadable':
-        return 'badge-downloadable';
-      case 'downloading':
-        return 'badge-downloading';
-      default:
-        return '';
-    }
-  });
+  protected readonly languageDetectorAPIInfo: APIInfo = {
+    name: 'Language Detector API',
+    availability: this.languageDetectorAPIService.availability,
+    downloadProgress: this.languageDetectorAPIService.downloadProgress,
+    error: this.languageDetectorAPIError,
+    docsLinks: [
+      {
+        link: 'https://developer.chrome.com/docs/ai/language-detection',
+        name: 'Chrome Developers Docs',
+      },
+      {
+        link: 'https://developer.mozilla.org/en-US/docs/Web/API/LanguageDetector',
+        name: 'MDN Docs',
+      },
+    ],
+    chromeInternalLinks: [
+      {
+        link: 'chrome://on-device-internals',
+        name: 'chrome://on-device-internals',
+      },
+      {
+        link: 'chrome://flags/#language-detection-api',
+        name: 'chrome://flags/#language-detection-api',
+      },
+      {
+        link: 'chrome://flags/#prompt-api-for-gemini-nano-multimodal-input',
+        name: 'chrome://flags/#prompt-api-for-gemini-nano-multimodal-input',
+      },
+    ],
+  };
+
+  protected readonly translatorAPIInfo: APIInfo = {
+    name: 'Translator API',
+    availability: this.translatorAPIService.availability,
+    downloadProgress: this.translatorAPIService.downloadProgress,
+    error: this.translatorAPIError,
+    docsLinks: [
+      {
+        link: 'https://developer.chrome.com/docs/ai/translator-api',
+        name: 'Chrome Developers Docs',
+      },
+      {
+        link: 'https://developer.mozilla.org/en-US/docs/Web/API/Translator',
+        name: 'MDN Docs',
+      },
+    ],
+    chromeInternalLinks: [
+      {
+        link: 'chrome://on-device-internals',
+        name: 'chrome://on-device-internals',
+      },
+      {
+        link: 'chrome://flags/#translation-api',
+        name: 'chrome://flags/#translation-api',
+      },
+      {
+        link: 'chrome://flags/#prompt-api-for-gemini-nano-multimodal-input',
+        name: 'chrome://flags/#prompt-api-for-gemini-nano-multimodal-input',
+      },
+    ],
+  };
 
   /**
    * Keeps comments translations state.
@@ -91,9 +104,7 @@ export class GeminiNanoTranslatorDemoComponent implements OnDestroy {
    */
   protected readonly commentsTranslations = signal<Record<string, CommentsTranslationState>>({});
 
-  protected downloadLanguageDetectorModel(event: Event) {
-    event.preventDefault();
-
+  protected downloadLanguageDetectorModel() {
     this.languageDetectorAPIService.createDetector().catch((error) => {
       this.languageDetectorAPIError.set(error ? error.message : 'Unknown error occurred');
     });
@@ -172,9 +183,7 @@ export class GeminiNanoTranslatorDemoComponent implements OnDestroy {
     }
   }
 
-  protected downloadTranslatorModel(event: Event) {
-    event.preventDefault();
-
+  protected downloadTranslatorModel() {
     this.translatorAPIService.createTranslator().catch((error) => {
       this.translatorAPIError.set(error ? error.message : 'Unknown error occurred');
     });

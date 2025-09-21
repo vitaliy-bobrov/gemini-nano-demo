@@ -3,11 +3,11 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'genimi-nano-translator-demo',
+    redirectTo: 'gemini-nano-translator-demo',
     pathMatch: 'full',
   },
   {
-    path: 'genimi-nano-translator-demo',
+    path: 'gemini-nano-translator-demo',
     loadComponent: () =>
       import(
         './gemini-nano-translator-demo/gemini-nano-translator-demo'
@@ -19,5 +19,12 @@ export const routes: Routes = [
       import(
         './gemini-nano-summarizer-demo/gemini-nano-summarizer-demo'
       ).then((m) => m.GeminiNanoSummarizerDemoComponent),
+  },
+  {
+    path: 'gemini-nano-writer-demo',
+    loadComponent: () =>
+      import(
+        './gemini-nano-writer-demo/gemini-nano-writer-demo'
+      ).then((m) => m.GeminiNanoWriterDemoComponent),
   },
 ];

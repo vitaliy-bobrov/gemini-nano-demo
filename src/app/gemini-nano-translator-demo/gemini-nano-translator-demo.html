@@ -1,142 +1,21 @@
-<mat-expansion-panel>
-  <mat-expansion-panel-header>
-    <mat-panel-title>
-      <h2
-        matBadgeSize="large"
-        [matBadge]="languageDetectorAPIStatusText()"
-        [matBadgeOverlap]="false"
-        [class.badge-available]="languageDetectorAPIAvailability() === 'available'"
-        [class.badge-unavailable]="languageDetectorAPIAvailability() === 'unavailable'"
-        [class.badge-checking]="languageDetectorAPIAvailability() === 'checking'"
-        [class.badge-downloadable]="languageDetectorAPIAvailability() === 'downloadable'"
-        [class.badge-downloading]="languageDetectorAPIAvailability() === 'downloading'"
-      >
-        Language Detector API
-      </h2>
-    </mat-panel-title>
-  </mat-expansion-panel-header>
-  <section class="content">
-    @if (languageDetectorAPIAvailability() === 'downloadable') {
-    <p>
-      <button matButton="tonal" (click)="downloadLanguageDetectorModel($event)">
-        Download model
-      </button>
-    </p>
-    }
-    <p>
-      <label id="progress-bar-label">
-        Model Download progress:
-        <mat-progress-bar
-          aria-labelledby="progress-bar-label"
-          mode="determinate"
-          [value]="languageDetectorAPIDownloadProgress()"
-        ></mat-progress-bar>
-      </label>
-    </p>
-    <mat-divider></mat-divider>
-
-    @if (languageDetectorAPIError(); as error) {
-    <p class="error">{{ error }}</p>
-    <mat-divider></mat-divider>
-    }
-
-    <section>
-      <h3>Documentation</h3>
-      <mat-nav-list>
-        <app-external-link link="https://developer.chrome.com/docs/ai/language-detection">
-          Chrome Developers Docs
-        </app-external-link>
-        <app-external-link link="https://developer.mozilla.org/en-US/docs/Web/API/LanguageDetector">
-          MDN Docs
-        </app-external-link>
-      </mat-nav-list>
-    </section>
-    <mat-divider></mat-divider>
-    <section>
-      <h3>Chrome internal tools</h3>
-      <mat-nav-list>
-        <app-external-link link="chrome://on-device-internals">
-          chrome://on-device-internals
-        </app-external-link>
-        <app-external-link link="chrome://flags/#language-detection-api">
-          chrome://flags/#language-detection-api
-        </app-external-link>
-        <app-external-link link="chrome://flags/#prompt-api-for-gemini-nano-multimodal-input">
-          chrome://flags/#prompt-api-for-gemini-nano-multimodal-input
-        </app-external-link>
-      </mat-nav-list>
-    </section>
-  </section>
-</mat-expansion-panel>
-
-<mat-expansion-panel>
-  <mat-expansion-panel-header>
-    <mat-panel-title>
-      <h2
-        matBadgeSize="large"
-        [matBadge]="translatorAPIStatusText()"
-        [matBadgeOverlap]="false"
-        [class.badge-available]="translatorAPIAvailability() === 'available'"
-        [class.badge-unavailable]="translatorAPIAvailability() === 'unavailable'"
-        [class.badge-checking]="translatorAPIAvailability() === 'checking'"
-        [class.badge-downloadable]="translatorAPIAvailability() === 'downloadable'"
-        [class.badge-downloading]="translatorAPIAvailability() === 'downloading'"
-      >
-        Translator API
-      </h2>
-    </mat-panel-title>
-  </mat-expansion-panel-header>
-  <section class="content">
-    @if (translatorAPIAvailability() === 'downloadable') {
-    <p>
-      <button matButton="tonal" (click)="downloadTranslatorModel($event)">Download model</button>
-    </p>
-    }
-    <p>
-      <label id="translator-progress-bar-label">
-        Model Download progress:
-        <mat-progress-bar
-          aria-labelledby="translator-progress-bar-label"
-          mode="determinate"
-          [value]="translatorAPIDownloadProgress()"
-        ></mat-progress-bar>
-      </label>
-    </p>
-    <mat-divider></mat-divider>
-
-    @if (translatorAPIError(); as error) {
-    <p class="error">{{ error }}</p>
-    <mat-divider></mat-divider>
-    }
-
-    <section>
-      <h3>Documentation</h3>
-      <mat-nav-list>
-        <app-external-link link="https://developer.chrome.com/docs/ai/translator-api">
-          Chrome Developers Docs
-        </app-external-link>
-        <app-external-link link="https://developer.mozilla.org/en-US/docs/Web/API/Translator">
-          MDN Docs
-        </app-external-link>
-      </mat-nav-list>
-    </section>
-    <mat-divider></mat-divider>
-    <section>
-      <h3>Chrome internal tools</h3>
-      <mat-nav-list>
-        <app-external-link link="chrome://on-device-internals">
-          chrome://on-device-internals
-        </app-external-link>
-        <app-external-link link="chrome://flags/#translation-api">
-          chrome://flags/#translation-api
-        </app-external-link>
-        <app-external-link link="chrome://flags/#prompt-api-for-gemini-nano-multimodal-input">
-          chrome://flags/#prompt-api-for-gemini-nano-multimodal-input
-        </app-external-link>
-      </mat-nav-list>
-    </section>
-  </section>
-</mat-expansion-panel>
+<gmd-ai-api-info
+  [name]="languageDetectorAPIInfo.name"
+  [availability]="languageDetectorAPIInfo.availability()"
+  [downloadProgress]="languageDetectorAPIInfo.downloadProgress()"
+  [error]="languageDetectorAPIInfo.error()"
+  [docsLinks]="languageDetectorAPIInfo.docsLinks"
+  [chromeInternalLinks]="languageDetectorAPIInfo.chromeInternalLinks"
+  (download)="downloadLanguageDetectorModel()"
+/>
+<gmd-ai-api-info
+  [name]="translatorAPIInfo.name"
+  [availability]="translatorAPIInfo.availability()"
+  [downloadProgress]="translatorAPIInfo.downloadProgress()"
+  [error]="translatorAPIInfo.error()"
+  [docsLinks]="translatorAPIInfo.docsLinks"
+  [chromeInternalLinks]="translatorAPIInfo.chromeInternalLinks"
+  (download)="downloadTranslatorModel()"
+/>
 
 <section class="bug-report-section">
   <h2 class="mdc-typography--headline-medium">Bug Report: Critical Data Leakage</h2>
