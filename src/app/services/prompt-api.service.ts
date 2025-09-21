@@ -19,6 +19,7 @@ declare global {
 export class PromptAPIService extends AiApiBaseService {
   static readonly DefaultOptions: LanguageModelOptions = {
     expectedInputLanguages: ['en'],
+    outputLanguage: 'en',
     expectedInputs: [{ type: 'text' }],
   };
   private readonly session = signal<LanguageModel | null>(null);

@@ -7,3 +7,81 @@
   [chromeInternalLinks]="promptAPIInfo.chromeInternalLinks"
   (download)="downloadPromptModel()"
 />
+
+<section class="bug-report-section">
+  <h2 class="mdc-typography--headline-medium">Smart Bug Report Assistant</h2>
+
+  <mat-card appearance="outlined">
+    <mat-card-header>
+      <mat-card-title>Step 1: Extracting Order from Chaos with Structured Output</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <mat-form-field class="full-width">
+        <mat-label>Raw Error Log</mat-label>
+        <textarea
+          matInput
+          rows="10"
+          [(ngModel)]="rawLogInput"
+          placeholder="Paste your messy error log here..."
+        ></textarea>
+      </mat-form-field>
+
+      <div class="form-actions">
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="extractInfoFromLog()"
+          [disabled]="isExtracting() || !rawLogInput()"
+        >
+          @if (isExtracting()) {
+            <mat-spinner diameter="24"></mat-spinner>
+          } @else {
+            Extract Key Info
+          }
+        </button>
+      </div>
+
+      @if (extractionError()) {
+        <p class="error-message">Error: {{ extractionError() }}</p>
+      }
+
+      @if (extractedJsonOutput()) {
+        <h3>Extracted JSON:</h3>
+        <pre class="code-block">{{ extractedJsonOutput() | json }}</pre>
+      }
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card appearance="outlined">
+    <mat-card-header>
+      <mat-card-title>Step 2: Generating a Digestible Report with Streaming</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="form-actions">
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="generateBugReport()"
+          [disabled]="isGeneratingReport() || !extractedJsonOutput()"
+        >
+          @if (isGeneratingReport()) {
+            <mat-spinner diameter="24"></mat-spinner>
+          } @else {
+            Generate Bug Report
+          }
+        </button>
+      </div>
+
+      @if (reportGenerationError()) {
+        <p class="error-message">Error: {{ reportGenerationError() }}</p>
+      }
+
+      @if (bugReportOutput()) {
+        <h3>Generated Bug Report:</h3>
+        <article class="bug-report-article">
+          {{ bugReportOutput() }}
+        </article>
+      }
+    </mat-card-content>
+  </mat-card>
+</section>

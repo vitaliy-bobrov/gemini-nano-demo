@@ -189,6 +189,7 @@ type LanguageModelPromptInput = string | LanguageModelInput[];
 
 interface LanguageModelOptions {
   expectedInputLanguages?: string[];
+  outputLanguage?: string;
   topK?: number;
   temperature?: number;
   initialPrompts?: LanguageModelPrompt[];
