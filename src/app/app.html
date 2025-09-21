@@ -12,6 +12,16 @@
         <mat-icon matListItemIcon>translate</mat-icon>
         <div matListItemTitle>Translator Demo</div>
       </a>
+      <a
+        mat-list-item
+        routerLink="/gemini-nano-summarizer-demo"
+        routerLinkActive
+        #rla2="routerLinkActive"
+        [activated]="rla2.isActive"
+      >
+        <mat-icon matListItemIcon>summarize</mat-icon>
+        <div matListItemTitle>Summarizer Demo</div>
+      </a>
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content class="content">

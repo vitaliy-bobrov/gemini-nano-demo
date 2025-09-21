@@ -1,0 +1,159 @@
+<mat-expansion-panel>
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      <h2
+        matBadgeSize="large"
+        [matBadge]="summarizerAPIStatusText()"
+        [matBadgeOverlap]="false"
+        [class.badge-available]="summarizerAPIAvailability() === 'available'"
+        [class.badge-unavailable]="summarizerAPIAvailability() === 'unavailable'"
+        [class.badge-checking]="summarizerAPIAvailability() === 'checking'"
+        [class.badge-downloadable]="summarizerAPIAvailability() === 'downloadable'"
+        [class.badge-downloading]="summarizerAPIAvailability() === 'downloading'"
+      >
+        Summarizer API
+      </h2>
+    </mat-panel-title>
+  </mat-expansion-panel-header>
+  <section class="content">
+    @if (summarizerAPIAvailability() === 'downloadable') {
+    <p>
+      <button matButton="tonal" (click)="downloadSummarizerModel($event)">Download model</button>
+    </p>
+    }
+    <p>
+      <label id="progress-bar-label">
+        Model Download progress:
+        <mat-progress-bar
+          aria-labelledby="progress-bar-label"
+          mode="determinate"
+          [value]="summarizerAPIDownloadProgress()"
+        ></mat-progress-bar>
+      </label>
+    </p>
+    <mat-divider></mat-divider>
+
+    @if (summarizerAPIError(); as error) {
+    <p class="error">{{ error }}</p>
+    <mat-divider></mat-divider>
+    }
+
+    <section>
+      <h3>Documentation</h3>
+      <mat-nav-list>
+        <app-external-link link="https://developer.chrome.com/docs/ai/summarizer-api">
+          Chrome Developers Docs
+        </app-external-link>
+        <app-external-link link="https://developer.mozilla.org/en-US/docs/Web/API/Summarizer">
+          MDN Docs
+        </app-external-link>
+      </mat-nav-list>
+    </section>
+    <mat-divider></mat-divider>
+    <section>
+      <h3>Chrome internal tools</h3>
+      <mat-nav-list>
+        <app-external-link link="chrome://on-device-internals">
+          chrome://on-device-internals
+        </app-external-link>
+        <app-external-link link="chrome://flags/#summarization-api-for-gemini-nano">
+          chrome://flags/#summarization-api-for-gemini-nano
+        </app-external-link>
+        <app-external-link link="chrome://flags/#prompt-api-for-gemini-nano-multimodal-input">
+          chrome://flags/#prompt-api-for-gemini-nano-multimodal-input
+        </app-external-link>
+      </mat-nav-list>
+    </section>
+  </section>
+</mat-expansion-panel>
+
+<section class="bug-report-section">
+  <h2 class="mdc-typography--headline-medium">Technical Support Tickets</h2>
+
+  <form class="options-form">
+    <mat-form-field>
+      <mat-label>Format</mat-label>
+      <mat-select [(ngModel)]="formValue.format" name="format">
+        @for (format of summarizerFormats; track format) {
+        <mat-option [value]="format">{{ format }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Length</mat-label>
+      <mat-select [(ngModel)]="formValue.length" name="length">
+        @for (size of summarizerSizes; track size) {
+        <mat-option [value]="size">{{ size }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Type</mat-label>
+      <mat-select [(ngModel)]="formValue.type" name="type">
+        @for (type of summarizerTypes; track type) {
+        <mat-option [value]="type">{{ type }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Output Language</mat-label>
+      <mat-select [(ngModel)]="formValue.outputLanguage" name="outputLanguage">
+        @for (lang of outputLanguages; track lang.value) {
+        <mat-option [value]="lang.value">{{ lang.displayValue }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field class="context-field">
+      <mat-label>Context</mat-label>
+      <textarea matInput [(ngModel)]="formValue.context" name="context"></textarea>
+    </mat-form-field>
+
+    <div class="form-actions">
+      <button type="button" mat-raised-button color="primary" (click)="summarizeComments(comments)">
+        Summarize
+      </button>
+      <button
+        type="button"
+        mat-raised-button
+        color="primary"
+        (click)="summarizeCommentsStream(comments)"
+      >
+        Stream Summarize
+      </button>
+    </div>
+  </form>
+
+  <div class="summary-container">
+    @if (isSummaryInProgress() && !summary()) {
+    <mat-spinner diameter="36"></mat-spinner>
+    } @if (summary(); as summary) {
+    <article class="summary-article">
+      <h3 class="summary-header">
+        <span>Content summary</span>@if (isSummaryInProgress()) {
+        <mat-spinner diameter="24"></mat-spinner>
+        }
+      </h3>
+      <p>{{ summary }}</p>
+    </article>
+    }
+  </div>
+
+  <div class="comments-thread">
+    @for (comment of comments; track comment.author) {
+
+    <mat-card class="comment-card" appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>{{ comment.author }}</mat-card-title>
+        <mat-card-subtitle>{{ comment.date }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p>{{ comment.content }}</p>
+      </mat-card-content>
+    </mat-card>
+    }
+  </div>
+</section>

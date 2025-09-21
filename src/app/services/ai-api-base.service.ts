@@ -7,9 +7,11 @@ import { signal } from "@angular/core";
 export abstract class AiApiBaseService {
   protected readonly availabilityStatus = signal<AiApiAvailability | 'checking'>('checking');
   protected readonly downloadProgressState = signal<number | null>(null);
+  protected readonly modelTotalSizeState = signal<number | null>(null);
 
   public readonly downloadProgress = this.downloadProgressState.asReadonly();
   public readonly availability = this.availabilityStatus.asReadonly();
+  public readonly modelTotalSize = this.modelTotalSizeState.asReadonly();
 
   constructor() {
     this.checkAvailability();

@@ -58,6 +58,7 @@ export class LanguageDetectorAPIService extends AiApiBaseService {
             this.downloadProgressState.set(0);
 
             monitor.addEventListener('downloadprogress', (event: HttpDownloadProgressEvent) => {
+              this.modelTotalSizeState.set(event.total ?? null);
               this.downloadProgressState.set(event.loaded * 100);
             });
           },

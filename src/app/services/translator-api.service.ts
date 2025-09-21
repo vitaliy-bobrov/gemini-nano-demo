@@ -46,6 +46,7 @@ export class TranslatorAPIService extends AiApiBaseService {
             ...options,
             monitor: (monitor) => {
               monitor.addEventListener('downloadprogress', (event: HttpDownloadProgressEvent) => {
+                this.modelTotalSizeState.set(event.total ?? null);
                 this.downloadProgressState.set(event.loaded * 100);
               });
             },
@@ -65,6 +66,7 @@ export class TranslatorAPIService extends AiApiBaseService {
     // Recreate translator with new options.
     this.destroy();
     const translator = await this.createTranslator(options);
+
     if (!translator) {
       throw new Error('Translator API is not available.');
     }
@@ -83,9 +85,18 @@ export class TranslatorAPIService extends AiApiBaseService {
     // Recreate translator with new options.
     this.destroy();
     const translator = await this.createTranslator(options);
+
     if (!translator) {
       throw new Error('Translator API is not available.');
     }
+
+    const totalInputQuota = translator.inputQuota;
+    const inputUsage = await translator.measureInputUsage(text);
+
+    if (inputUsage > totalInputQuota) {
+      throw new Error("Insufficient quota to translate.");
+    }
+
     return translator.translateStreaming(text);
   }
 

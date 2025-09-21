@@ -1,4 +1,4 @@
-export interface Comment { author: string; date: string; content: string; }
+import { Comment } from '../shared/comment';
 
 export const COMMENTS: Comment[] = [
   {

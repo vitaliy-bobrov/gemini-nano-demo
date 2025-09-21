@@ -13,4 +13,11 @@ export const routes: Routes = [
         './gemini-nano-translator-demo/gemini-nano-translator-demo'
       ).then((m) => m.GeminiNanoTranslatorDemoComponent),
   },
+  {
+    path: 'gemini-nano-summarizer-demo',
+    loadComponent: () =>
+      import(
+        './gemini-nano-summarizer-demo/gemini-nano-summarizer-demo'
+      ).then((m) => m.GeminiNanoSummarizerDemoComponent),
+  },
 ];

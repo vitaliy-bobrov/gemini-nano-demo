@@ -10,7 +10,8 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { DetectionResult, LanguageDetectorAPIService } from '../services/language-detector-api.service';
 import { TranslatorAPIService } from '../services/translator-api.service';
 import { ExternalLinkComponent } from '../shared/external-link/external-link';
-import { Comment, COMMENTS } from './data';
+import { Comment } from '../shared/comment';
+import { COMMENTS } from './data';
 
 type CommentsTranslationState = DetectionResult & {
   translation?: string;
@@ -115,10 +116,14 @@ export class GeminiNanoTranslatorDemoComponent implements OnDestroy {
   }
 
   protected async translateComment(comment: Comment, detectionData: DetectionResult) {
-    const translation = await this.translatorAPIService.translate(comment.content, {
-      sourceLanguage: detectionData.detectedLanguage,
-      targetLanguage: 'en',
-    }).catch((error) => {
+    this.translatorAPIError.set(null);
+    const translation = await this.translatorAPIService.translate(
+      comment.content,
+      {
+        sourceLanguage: detectionData.detectedLanguage,
+        targetLanguage: 'en',
+      }
+    ).catch((error) => {
       this.translatorAPIError.set(error ? error.message : 'Unknown error occurred');
     });
     const key = `${comment.author}-${comment.date}}`;
@@ -132,12 +137,16 @@ export class GeminiNanoTranslatorDemoComponent implements OnDestroy {
   }
 
   protected async translateCommentStream(comment: Comment, detectionData: DetectionResult) {
+    this.translatorAPIError.set(null);
     const key = `${comment.author}-${comment.date}}`;
     try {
-      const translationStream = await this.translatorAPIService.translateStreaming(comment.content, {
-        sourceLanguage: detectionData.detectedLanguage,
-        targetLanguage: 'en',
-      });
+      const translationStream = await this.translatorAPIService.translateStreaming(
+        comment.content,
+        {
+          sourceLanguage: detectionData.detectedLanguage,
+          targetLanguage: 'en',
+        }
+      );
       const translationSignal = signal<string | null>(null);
       this.commentsTranslations.update((current) => ({
         ...current,

@@ -1,0 +1,43 @@
+:host {
+  display: block;
+  padding-bottom: 24px;
+}
+
+.options-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+
+  .context-field {
+    grid-column: 1 / -1;
+  }
+
+  .form-actions {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 16px;
+    justify-content: flex-end;
+  }
+}
+
+.summary-container {
+  display: flex;
+  align-items: center;
+  margin: 20px 0;
+}
+
+.summary-article {
+  padding: 16px;
+  border-radius: 8px;
+  background-color: var(--mat-sys-color-surface-container-high);
+  color: var(--mat-sys-color-on-surface-variant);
+}
+
+.summary-header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 0;
+  color: var(--mat-sys-color-on-surface);
+}
