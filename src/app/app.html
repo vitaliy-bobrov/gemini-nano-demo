@@ -32,6 +32,16 @@
         <mat-icon matListItemIcon>edit</mat-icon>
         <div matListItemTitle>Writer Demo</div>
       </a>
+      <a
+        mat-list-item
+        routerLink="/gemini-nano-prompt-demo"
+        routerLinkActive
+        #rla4="routerLinkActive"
+        [activated]="rla4.isActive"
+      >
+        <mat-icon matListItemIcon>rate_review</mat-icon>
+        <div matListItemTitle>Prompt Demo</div>
+      </a>
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content class="content">

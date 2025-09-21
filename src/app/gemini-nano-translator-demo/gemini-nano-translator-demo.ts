@@ -60,10 +60,6 @@ export class GeminiNanoTranslatorDemoComponent implements OnDestroy {
         link: 'chrome://flags/#language-detection-api',
         name: 'chrome://flags/#language-detection-api',
       },
-      {
-        link: 'chrome://flags/#prompt-api-for-gemini-nano-multimodal-input',
-        name: 'chrome://flags/#prompt-api-for-gemini-nano-multimodal-input',
-      },
     ],
   };
 
@@ -90,10 +86,6 @@ export class GeminiNanoTranslatorDemoComponent implements OnDestroy {
       {
         link: 'chrome://flags/#translation-api',
         name: 'chrome://flags/#translation-api',
-      },
-      {
-        link: 'chrome://flags/#prompt-api-for-gemini-nano-multimodal-input',
-        name: 'chrome://flags/#prompt-api-for-gemini-nano-multimodal-input',
       },
     ],
   };

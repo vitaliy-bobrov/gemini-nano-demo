@@ -57,10 +57,6 @@ export class GeminiNanoSummarizerDemoComponent implements OnDestroy {
         link: 'chrome://flags/#summarization-api-for-gemini-nano',
         name: 'chrome://flags/#summarization-api-for-gemini-nano',
       },
-      {
-        link: 'chrome://flags/#prompt-api-for-gemini-nano-multimodal-input',
-        name: 'chrome://flags/#prompt-api-for-gemini-nano-multimodal-input',
-      },
     ],
   };
   protected readonly summary = signal<string | null>(null);

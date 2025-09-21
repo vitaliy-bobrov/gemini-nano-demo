@@ -65,10 +65,6 @@ export class GeminiNanoWriterDemoComponent implements OnDestroy {
         link: 'chrome://flags/#writer-api-for-gemini-nano',
         name: 'chrome://flags/#writer-api-for-gemini-nano',
       },
-      {
-        link: 'chrome://flags/#prompt-api-for-gemini-nano-multimodal-input',
-        name: 'chrome://flags/#prompt-api-for-gemini-nano-multimodal-input',
-      },
     ],
   };
 
@@ -91,10 +87,6 @@ export class GeminiNanoWriterDemoComponent implements OnDestroy {
       {
         link: 'chrome://flags/#rewriter-api-for-gemini-nano',
         name: 'chrome://flags/#rewriter-api-for-gemini-nano',
-      },
-      {
-        link: 'chrome://flags/#prompt-api-for-gemini-nano-multimodal-input',
-        name: 'chrome://flags/#prompt-api-for-gemini-nano-multimodal-input',
       },
     ],
   };
@@ -122,10 +114,6 @@ export class GeminiNanoWriterDemoComponent implements OnDestroy {
       {
         link: 'chrome://flags/#proofreader-api-for-gemini-nano',
         name: 'chrome://flags/#proofreader-api-for-gemini-nano',
-      },
-      {
-        link: 'chrome://flags/#prompt-api-for-gemini-nano-multimodal-input',
-        name: 'chrome://flags/#prompt-api-for-gemini-nano-multimodal-input',
       },
     ],
   };

@@ -1,0 +1,9 @@
+<gmd-ai-api-info
+  [name]="promptAPIInfo.name"
+  [availability]="promptAPIInfo.availability()"
+  [downloadProgress]="promptAPIInfo.downloadProgress()"
+  [error]="promptAPIInfo.error()"
+  [docsLinks]="promptAPIInfo.docsLinks"
+  [chromeInternalLinks]="promptAPIInfo.chromeInternalLinks"
+  (download)="downloadPromptModel()"
+/>

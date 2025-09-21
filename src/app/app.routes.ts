@@ -27,4 +27,11 @@ export const routes: Routes = [
         './gemini-nano-writer-demo/gemini-nano-writer-demo'
       ).then((m) => m.GeminiNanoWriterDemoComponent),
   },
+  {
+    path: 'gemini-nano-prompt-demo',
+    loadComponent: () =>
+      import(
+        './gemini-nano-prompt-demo/gemini-nano-prompt-demo'
+      ).then((m) => m.GeminiNanoPromptDemoComponent),
+  },
 ];
