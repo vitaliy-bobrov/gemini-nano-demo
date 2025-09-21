@@ -161,6 +161,58 @@ interface Proofreader {
   destroy(): void;
 }
 
+interface LanguageModelParams {
+  defaultTopK?: number;
+  maxTopK?: number;
+  defaultTemperature?: number;
+  maxTemperature?: number;
+}
+
+type LanguageModelRole = 'user' | 'system' | 'assistant';
+type LanguageModelInputTypes = 'text' | 'image' | 'audio';
+
+interface LanguageModelInputConfig {
+  type: LanguageModelInputTypes;
+}
+
+interface LanguageModelInput extends LanguageModelInputConfig {
+  value: string;
+}
+
+interface LanguageModelPrompt {
+  role: LanguageModelRole;
+  content: string | LanguageModelInput[];
+  prefix?: boolean;
+}
+
+type LanguageModelPromptInput = string | LanguageModelInput[];
+
+interface LanguageModelOptions {
+  expectedInputLanguages?: string[];
+  topK?: number;
+  temperature?: number;
+  initialPrompts?: LanguageModelPrompt[];
+  expectedInputs?: LanguageModelInputConfig[];
+  responseConstraint?: JSONSchema7;
+  omitResponseConstraintInput?: boolean;
+  monitor?: (monitor: CreateMonitor) => void;
+  signal?: AbortSignal;
+}
+
+interface LanguageModel {
+  availability(options?: LanguageModelOptions): Promise<AiApiAvailability>;
+  create(options?: LanguageModelOptions): Promise<LanguageModel>;
+  params(): Promise<LanguageModelParams>;
+  prompt(input: LanguageModelPromptInput, options?: { signal?: AbortSignal }): Promise<string>;
+  promptStreaming(input: LanguageModelPromptInput, options?: { signal?: AbortSignal }): ReadableStream<string>;
+  append(input: LanguageModelPromptInput): Promise<void>;
+  clone(options?: { signal?: AbortSignal }): Promise<LanguageModel>;
+  measureInputUsage(input: LanguageModelPromptInput, options?: { responseConstraint?: JSONSchema7; signal?: AbortSignal }): number;
+  destroy(): void;
+  readonly inputQuota: number;
+  readonly inputUsage: number;
+}
+
 type AiApiAvailability = 'unavailable' | 'downloadable' | 'downloading' | 'available';
 
 declare global {
@@ -171,5 +223,6 @@ declare global {
     Writer?: Writer;
     Rewriter?: Rewriter;
     Proofreader?: Proofreader;
+    LanguageModel?: LanguageModel;
   }
 }
