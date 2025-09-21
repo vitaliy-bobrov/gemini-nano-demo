@@ -6,9 +6,11 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSelectModule } from '@angular/material/select';
 import { PromptAPIService } from '../services/prompt-api.service';
 import { AIAPIInfoComponent } from '../shared/ai-api-info/ai-api-info';
 import { APIInfo } from '../shared/api-info';
+import { rawLogInputExamples } from './data';
 
 interface BugReportInfo {
   errorMessage: string;
@@ -29,6 +31,7 @@ interface BugReportInfo {
     MatFormFieldModule,
     MatInputModule,
     MatProgressSpinnerModule,
+    MatSelectModule,
     JsonPipe,
   ],
 })
@@ -36,11 +39,8 @@ export class GeminiNanoPromptDemoComponent {
   private readonly promptAPIService = inject(PromptAPIService);
   protected readonly promptAPIError = signal<string | null>(null);
 
-  protected rawLogInput = signal(`
-    [ERROR] 2025-09-21 15:30:10,123 [http-nio-8080-exec-5] o.a.c.c.C.[.[.[/].[dispatcherServlet] - Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed; nested exception is java.lang.NullPointerException: Cannot read properties of null (reading 'getPricingDetails')] with root cause
-java.lang.NullPointerException: Cannot read properties of null (reading 'getPricingDetails')
-    at com.example.service.ProductService.calculateFinalPrice(ProductService.java:42)
-    at com.example.controller.OrderController.submitOrder(OrderController.java:88)`);
+  protected readonly rawLogInputExamples = rawLogInputExamples;
+  protected rawLogInput = signal('');
   protected extractedJsonOutput = signal<string | BugReportInfo | null>(null);
   protected bugReportOutput = signal<string | null>(null);
   protected isExtracting = signal(false);
@@ -92,14 +92,21 @@ java.lang.NullPointerException: Cannot read properties of null (reading 'getPric
       + this.rawLogInput()
       + '/n'
       + 'Use the following JSON schema to format the output.'
-      + '"explanation" field should provide human readable explanation of the error.';
+      + '"explanation" field should provide human readable explanation of the '
+      + 'error.'
+      + '"possibleSolution" field should provide a very short description of '
+      + 'a possible solution to fix the error.'
+      + '"programmingLanguage" field should specify the possible programming '
+      + 'language of the code snippet.';
     const schema = {
       "type": "object",
       "properties": {
         "errorMessage": { "type": "string" },
         "fileName": { "type": "string" },
         "lineNumber": { "type": "string" },
-        "explanation": { "type": "string" }
+        "programmingLanguage": { "type": "string" },
+        "explanation": { "type": "string" },
+        "possibleSolution": { "type": "string" }
       },
       "required": ["errorMessage", "fileName", "lineNumber"]
     };
@@ -154,9 +161,10 @@ java.lang.NullPointerException: Cannot read properties of null (reading 'getPric
     }
 
     const prompt = 'Based on this structured data, write a concise bug report '
-      + 'including a suggested title, a summary of the error, and potential '
-      + `reproduction steps.
-      Here is the data: ${JSON.stringify(extractedData, null, 2)}`;
+      + 'including a suggested title, a summary of the error, potential '
+      + 'reproduction steps, guess on a possible module or part of tech stack (backend/frontend), '
+      + 'and brief info about any possible fix solution or debug steps.'
+      + `Here is the data: ${JSON.stringify(extractedData, null, 2)}`;
 
     try {
       const stream = await this.promptAPIService.promptStreaming(prompt);
@@ -176,6 +184,12 @@ java.lang.NullPointerException: Cannot read properties of null (reading 'getPric
     } finally {
       this.isGeneratingReport.set(false);
     }
+  }
+
+  protected onExampleSelected(example: string) {
+    this.bugReportOutput.set(null);
+    this.extractedJsonOutput.set(null);
+    this.rawLogInput.set(example);
   }
 
   /**

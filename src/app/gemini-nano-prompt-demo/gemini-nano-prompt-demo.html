@@ -26,6 +26,15 @@
         ></textarea>
       </mat-form-field>
 
+      <mat-form-field class="full-width">
+        <mat-label>Select an example</mat-label>
+        <mat-select (selectionChange)="onExampleSelected($event.value)">
+          @for (example of rawLogInputExamples; track $index) {
+          <mat-option [value]="example">Example {{ $index + 1 }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
       <div class="form-actions">
         <button
           mat-raised-button
@@ -34,20 +43,16 @@
           [disabled]="isExtracting() || !rawLogInput()"
         >
           @if (isExtracting()) {
-            <mat-spinner diameter="24"></mat-spinner>
-          } @else {
-            Extract Key Info
-          }
+          <mat-spinner diameter="24"></mat-spinner>
+          } @else { Extract Key Info }
         </button>
       </div>
 
       @if (extractionError()) {
-        <p class="error-message">Error: {{ extractionError() }}</p>
-      }
-
-      @if (extractedJsonOutput()) {
-        <h3>Extracted JSON:</h3>
-        <pre class="code-block">{{ extractedJsonOutput() | json }}</pre>
+      <p class="error-message">Error: {{ extractionError() }}</p>
+      } @if (extractedJsonOutput()) {
+      <h3>Extracted JSON:</h3>
+      <pre class="code-block">{{ extractedJsonOutput() | json }}</pre>
       }
     </mat-card-content>
   </mat-card>
@@ -65,22 +70,18 @@
           [disabled]="isGeneratingReport() || !extractedJsonOutput()"
         >
           @if (isGeneratingReport()) {
-            <mat-spinner diameter="24"></mat-spinner>
-          } @else {
-            Generate Bug Report
-          }
+          <mat-spinner diameter="24"></mat-spinner>
+          } @else { Generate Bug Report }
         </button>
       </div>
 
       @if (reportGenerationError()) {
-        <p class="error-message">Error: {{ reportGenerationError() }}</p>
-      }
-
-      @if (bugReportOutput()) {
-        <h3>Generated Bug Report:</h3>
-        <article class="bug-report-article">
-          {{ bugReportOutput() }}
-        </article>
+      <p class="error-message">Error: {{ reportGenerationError() }}</p>
+      } @if (bugReportOutput()) {
+      <h3>Generated Bug Report:</h3>
+      <article class="bug-report-article">
+        {{ bugReportOutput() }}
+      </article>
       }
     </mat-card-content>
   </mat-card>
