@@ -41,7 +41,8 @@
                   "maximumError": "8kB"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "outputPath": "dist/gemini-nano-demo"
             },
             "development": {
               "optimization": false,
@@ -78,6 +79,12 @@
               }
             ],
             "styles": ["src/styles.css"]
+          }
+        },
+        "deploy": {
+          "builder": "angular-cli-ghpages:deploy",
+          "options": {
+            "baseHref": "/gemini-nano-demo/"
           }
         }
       }

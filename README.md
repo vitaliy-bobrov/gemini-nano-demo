@@ -9,6 +9,10 @@ This project showcases various demos built with Angular and integrated with Gemi
 - **Gemini Nano Translator Demo**: Illustrates real-time language translation powered by Gemini Nano.
 - **Gemini Nano Writer Demo**: Provides an example of content generation with Gemini Nano.
 
+## Deployed Demo
+
+You can access the live demo of this application here: [https://bobrov.dev/gemini-nano-demo/](https://bobrov.dev/gemini-nano-demo/)
+
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.2.
 
 ## Development server
