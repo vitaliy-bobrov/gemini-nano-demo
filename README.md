@@ -1,5 +1,14 @@
 # GeminiNanoDemo
 
+This project showcases various demos built with Angular and integrated with Gemini Nano capabilities.
+
+## Demos
+
+- **Gemini Nano Prompt Demo**: Demonstrates how to use Gemini Nano for prompt-based interactions.
+- **Gemini Nano Summarizer Demo**: Showcases text summarization using Gemini Nano.
+- **Gemini Nano Translator Demo**: Illustrates real-time language translation powered by Gemini Nano.
+- **Gemini Nano Writer Demo**: Provides an example of content generation with Gemini Nano.
+
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.3.2.
 
 ## Development server
